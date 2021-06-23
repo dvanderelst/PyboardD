@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ESP Web Server</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<style>html{font-family: Helvetica; display:inline-block; margin: 0px auto; text-align: center;}
+
+h1{color: #0F3376; padding: 2vh;}p{font-size: 1.5rem;}.button{display: inline-block; background-color: #e7bd3b; border: none; 
+    border-radius: 4px; color: white; padding: 16px 40px; text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}
+  .button2{background-color: #4286f4;}</style>
+
+
+</head>
+<body>
+<h1>ESP Web Server</h1>
+
+
+<!--Create Button-->
+<p><a id="button_id" href="#" ><button class="button">Get Data</button></a></p>
+
+
+<!--Append time and date to href tag-->
+<script>
+var now = new Date();
+var url = "/?data=" + now;
+var element = document.getElementById('button_id');
+element.setAttribute("href",url)
+</script>
+
+
+<h1><script>document.write(now);</script></h1>
+  
+
+</body>
+</html>
