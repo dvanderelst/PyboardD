@@ -17,22 +17,26 @@ h1{color: #0F3376; padding: 2vh;}p{font-size: 1.5rem;}.button{display: inline-bl
 <!--Append time and date to href tag-->
 <script>
 function myFunction(){
-var input = document.getElementById("input_id").value
-var now = new Date();
-var url = "/?data=" + now + 'ENDT' + input + 'ENDI';
+var input = document.getElementById("input_id").value;
+var today = new Date();
+var date = today.getDate()+'_'+(today.getMonth()+1)+'_'+today.getFullYear();
+var time = today.getHours() + "_" + today.getMinutes() + "_" + today.getSeconds();
+var dateTime = date+'_'+time;
+var url = "/?data=" + dateTime + 'ENDT' + input + 'ENDL';
 var element = document.getElementById('button_id');
 element.setAttribute("href",url)}
 </script>
 
 
-
-<h1>ESP Web Server</h1>
+<h1>DAQ Server</h1>
 <input id='input_id' type="text">
 <!--Create Button-->
 <p><a id="button_id" href="#" onclick="myFunction()"><button class="button">Get Data</button></a></p>
 
-<p><b>xx_time_xx</b></p>
-<p><b>xx_label_xx</b></p>
+<p>xx_time_xx</p>
+<p>xx_label_xx</p>
+<p>xx_file_xx</p>
+<pre>xx_graph_xx</pre>
 
 <p>xx_data_xx</p>
   

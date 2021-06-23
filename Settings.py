@@ -5,5 +5,5 @@ green = pyb.LED(2)
 blue = pyb.LED(3)
 
 
-sample_rate = 10000
-duration = 10
+sample_rate = 20000
+duration = 25
