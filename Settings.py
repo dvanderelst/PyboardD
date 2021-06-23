@@ -1,4 +1,9 @@
-break_character = '*'
-wifi_ssid = 'ZyXEL39940'
-wifi_password = '2BF0EBC3CC'
-port_number = 1234
+import pyb
+
+red = pyb.LED(1)
+green = pyb.LED(2)
+blue = pyb.LED(3)
+
+
+sample_rate = 10000
+duration = 10

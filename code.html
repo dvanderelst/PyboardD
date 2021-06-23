@@ -13,23 +13,28 @@ h1{color: #0F3376; padding: 2vh;}p{font-size: 1.5rem;}.button{display: inline-bl
 
 </head>
 <body>
-<h1>ESP Web Server</h1>
-
-
-<!--Create Button-->
-<p><a id="button_id" href="#" ><button class="button">Get Data</button></a></p>
-
 
 <!--Append time and date to href tag-->
 <script>
+function myFunction(){
+var input = document.getElementById("input_id").value
 var now = new Date();
-var url = "/?data=" + now;
+var url = "/?data=" + now + 'ENDT' + input + 'ENDI';
 var element = document.getElementById('button_id');
-element.setAttribute("href",url)
+element.setAttribute("href",url)}
 </script>
 
 
-<h1><script>document.write(now);</script></h1>
+
+<h1>ESP Web Server</h1>
+<input id='input_id' type="text">
+<!--Create Button-->
+<p><a id="button_id" href="#" onclick="myFunction()"><button class="button">Get Data</button></a></p>
+
+<p><b>xx_time_xx</b></p>
+<p><b>xx_label_xx</b></p>
+
+<p>xx_data_xx</p>
   
 
 </body>
