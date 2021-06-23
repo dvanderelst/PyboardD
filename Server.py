@@ -34,55 +34,58 @@ def create_access_point():
 
 
 def serve(access_point):
+    green = Settings.green
     socket = usocket.socket(usocket.AF_INET, usocket.SOCK_STREAM,usocket.SO_REUSEADDR)
     socket.bind(('', 80))
     socket.listen(5)
     while True:
-      try:
-        if gc.mem_free() < 102000:gc.collect()
-        conn, addr = socket.accept()
-        conn.settimeout(3.0)
-        Misc.connect_received_display()
-        print('Got a connection from %s' % str(addr))
-        request = conn.recv(1024)
-        conn.settimeout(None)
-        request = str(request)
-        #print('Content = %s' % request)
-        
-        ## PARSE REQUEST
-        #print(request)
-        
-        data_index = request.find('/?data') == 6
-        end_time_index = request.find('ENDT')
-        end_label_index = request.find('ENDL')
-        date_time = request[data_index+12:end_time_index]
-        date_time = date_time.replace('%20', ' ')
-        data_label = request[end_time_index+4:end_label_index]
-        
-        if len(date_time)>150: date_time = ''
-        if len(data_label)>50: data_label = ''
-        print('data and time:', date_time)
-        print('label:', data_label)
-        
-        total_buffer = []
-        graph = ''
-        output_file = ''
-        if len(data_label) > 0:
-            Settings.green.on()
-            output_file = data_label + "_" + date_time + '.csv'
-            sample_rate = Settings.sample_rate
-            duration = Settings.duration
-            total_buffer = Measure.measure(1, sample_rate, duration)
-            graph, min_value, max_value = Plot.plot(total_buffer)
-            Settings.green.off()
+        green.toggle()
+        try:
             
+            if gc.mem_free() < 102000:gc.collect()
+            conn, addr = socket.accept()
+            conn.settimeout(3.0)
+            Misc.connect_received_display()
+            print('Got a connection from %s' % str(addr))
+            request = conn.recv(1024)
+            conn.settimeout(None)
+            request = str(request)
+            #print('Content = %s' % request)
+            
+            ## PARSE REQUEST
+            #print(request)
+            
+            data_index = request.find('/?data') == 6
+            end_time_index = request.find('ENDT')
+            end_label_index = request.find('ENDL')
+            date_time = request[data_index+12:end_time_index]
+            date_time = date_time.replace('%20', ' ')
+            data_label = request[end_time_index+4:end_label_index]
+            
+            if len(date_time)>150: date_time = ''
+            if len(data_label)>50: data_label = ''
+            print('data and time:', date_time)
+            print('label:', data_label)
+            
+            total_buffer = []
+            graph = ''
+            output_file = ''
+            if len(data_label) > 0:
+                Settings.blue.on()
+                output_file = data_label + "_" + date_time + '.csv'
+                sample_rate = Settings.sample_rate
+                duration = Settings.duration
+                total_buffer = Measure.measure(1, sample_rate, duration)
+                graph, min_value, max_value = Plot.plot(total_buffer)
+                Settings.blue.off()
                 
-        response = web_page([date_time, data_label, graph, total_buffer,output_file])
-        conn.send('HTTP/1.1 200 OK\n')
-        conn.send('Content-Type: text/html\n')
-        conn.send('Connection: close\n\n')
-        conn.sendall(response)
-        conn.close()
-      except OSError as e:
-        conn.close()
-        print('Connection closed', e)
+                    
+            response = web_page([date_time, data_label, graph, total_buffer,output_file])
+            conn.send('HTTP/1.1 200 OK\n')
+            conn.send('Content-Type: text/html\n')
+            conn.send('Connection: close\n\n')
+            conn.sendall(response)
+            conn.close()
+        except OSError as e:
+            conn.close()
+            print('Connection closed', e)

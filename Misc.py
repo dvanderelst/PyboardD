@@ -5,11 +5,12 @@ def boot_display():
     red = Settings.red
     green = Settings.green
     blue = Settings.blue
+    leds = [red, green, blue]
     for x in range(3):
-        red.toggle()
-        green.toggle()
-        blue.toggle()
-        time.sleep(0.5)
+        for led in leds:
+            led.on()
+            time.sleep(0.5)
+            led.off()
     red.off()
     green.off()
     blue.off()
