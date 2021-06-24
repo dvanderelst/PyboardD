@@ -47,3 +47,7 @@ def horizontal(data, width=20,
         return out
 
     return ''.join(parts[int(round(x / fraction))] + "\n" for x in nums)
+
+
+#a = horizontal([1,2,3,4,0], character='-')
+#print(a)

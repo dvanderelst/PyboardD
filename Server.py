@@ -52,9 +52,7 @@ def serve(access_point):
             request = str(request)
             #print('Content = %s' % request)
             
-            ## PARSE REQUEST
-            #print(request)
-            
+            # Parse request
             data_index = request.find('/?data') == 6
             end_time_index = request.find('ENDT')
             end_label_index = request.find('ENDL')
@@ -62,30 +60,35 @@ def serve(access_point):
             date_time = date_time.replace('%20', ' ')
             data_label = request[end_time_index+4:end_label_index]
             
-            if len(date_time)>150: date_time = ''
-            if len(data_label)>50: data_label = ''
+            if len(date_time) > 150: date_time = ''
+            if len(data_label) > 50: data_label = ''
+            if len(data_label) == 0: data_label = 'No_Name'
             print('data and time:', date_time)
             print('label:', data_label)
+            output_file = data_label + "_" + date_time + '.csv'
             
-            total_buffer = []
-            graph = ''
-            output_file = ''
-            if len(data_label) > 0:
-                Settings.blue.on()
-                output_file = data_label + "_" + date_time + '.csv'
-                sample_rate = Settings.sample_rate
-                duration = Settings.duration
-                total_buffer = Measure.measure(1, sample_rate, duration)
-                graph, min_value, max_value = Plot.plot(total_buffer)
-                Settings.blue.off()
-                
-                    
+            # Get Data
+            Settings.blue.on()
+            sample_rate = Settings.sample_rate
+            duration = Settings.duration
+            total_buffer = Measure.measure(1, sample_rate, duration)
+            signal_threshold = Settings.signal_threshold
+            Settings.blue.off()
+            
+            # Get graph
+            graph, min_value, max_value = Plot.plot(total_buffer, threshold=signal_threshold)
+            
+            # Save data
+            if data_label is not 'No_Name': print('do save of data')
+            
+            # Create response html
             response = web_page([date_time, data_label, graph, total_buffer,output_file])
             conn.send('HTTP/1.1 200 OK\n')
             conn.send('Content-Type: text/html\n')
             conn.send('Connection: close\n\n')
             conn.sendall(response)
             conn.close()
+            
         except OSError as e:
             conn.close()
             print('Connection closed', e)

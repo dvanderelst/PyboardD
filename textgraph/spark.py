@@ -11,3 +11,4 @@ def spark(nums, characters=' ▁▂▃▄▅▆▇█'):
     fraction = max(nums) / float(len(characters) - 1)
     # Replace each number with its appropriate part then join
     return ''.join(characters[int(round(x / fraction))] for x in nums)
+

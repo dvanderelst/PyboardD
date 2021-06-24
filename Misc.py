@@ -9,7 +9,7 @@ def boot_display():
     for x in range(3):
         for led in leds:
             led.on()
-            time.sleep(0.5)
+            time.sleep(0.25)
             led.off()
     red.off()
     green.off()
