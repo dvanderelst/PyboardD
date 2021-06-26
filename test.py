@@ -14,6 +14,7 @@ def web_page(input_values={}):
     f.close()
     if 'date_time' in input_values: html = html.replace('xx_date_time_xx', input_values['date_time'])
     if 'label' in input_values: html = html.replace('xx_label_xx', input_values['label'])
+    if 'comment' in input_values: html = html.replace('xx_comment_xx', input_values['comment'])
     return html
 
 
@@ -37,12 +38,11 @@ app = microdot.Microdot()
 
 @app.route('/')
 def hello(request):
+    gc.collect()
     return microdot.Response(body=web_page(), headers=headers)
 
 
 @app.route('/form_action')
-def shutdown(request):
-    return microdot.Response(body=web_page(request.args), headers=headers)
-
-create_access_point()
-app.run(debug=True, host='192.168.4.1', port=80)
+def process_form(request):
+    gc.collect()
+    Settings.
