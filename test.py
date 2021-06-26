@@ -8,6 +8,14 @@ import Measure
 import Settings
 import Plot
 
+def web_page(input_values={}):
+    f = open('form.html','r')
+    html = f.read()
+    f.close()
+    if 'date_time' in input_values: html = html.replace('xx_date_time_xx', input_values['date_time'])
+    if 'label' in input_values: html = html.replace('xx_label_xx', input_values['label'])
+    return html
+
 
 def create_access_point():
     access_point = network.WLAN(1)
@@ -22,22 +30,19 @@ def create_access_point():
 
 
 
+headers={'Content-Type': 'text/html'}
+gc.collect()
 
 app = microdot.Microdot()
 
-
-
-
 @app.route('/')
 def hello(request):
-    return microdot.Response(body=htmldoc, headers={'Content-Type': 'text/html'})
+    return microdot.Response(body=web_page(), headers=headers)
 
 
-@app.route('/shutdown')
+@app.route('/form_action')
 def shutdown(request):
-    request.app.shutdown()
-    return 'The server is shutting down...'
-
+    return microdot.Response(body=web_page(request.args), headers=headers)
 
 create_access_point()
-app.run(debug=True, host='127.0.0.0', port=80)
+app.run(debug=True, host='192.168.4.1', port=80)
