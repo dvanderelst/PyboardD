@@ -45,6 +45,20 @@ def hello(request):
 @app.route('/form_action')
 def process_form(request):
     gc.collect()
+    
+    settings.blue.on()
+    sample_rate = settings.sample_rate
+    duration = settings.duration
+    buffer = measure.measure(1, sample_rate, duration)
+    signal_threshold = settings.signal_threshold
+    settings.blue.off()
+    
+    label = request.args['label']
+    date_time = request.args['date_time']
+    file_name = label + '_' + date_time  + '.csv'
+    
+    measure.write_data(buffer, file_name, prefixes = [label, date_time], mode='a', sep=',')
+            
     body = web_page(request.args)
     return microdot.Response(body=body, headers=headers)
 

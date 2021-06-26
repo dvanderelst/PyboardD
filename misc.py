@@ -1,6 +1,13 @@
 import settings
 import time
 
+
+def lst2txt(lst, sep=','):
+    txt = ''
+    for x in lst: txt = txt + str(x) + sep
+    txt = txt.rstrip(sep)
+    return txt
+
 def boot_display():
     red = settings.red
     green = settings.green

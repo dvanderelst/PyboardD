@@ -6,7 +6,7 @@ import json
 import time
 import machine
 import settings
-
+import misc
 
 adc1 = pyb.ADC(pyb.Pin.board.X8)
 trigger_pin1 = pyb.Pin('X1', pyb.Pin.OUT_PP)
@@ -53,6 +53,18 @@ def measure_both(first, second, fs, duration):
     buffer2 = measure(second, fs, duration)
     total = buffer1 + buffer2
     return total
+
+
+def write_data(buffer, file_name, prefixes = [], mode='a', sep=','):
+    f = open(file_name, mode)
+    for x in buffer:
+        line = prefixes + [x]
+        line = misc.lst2txt(line, sep=sep)
+        f.write(line + '\n')
+    f.close()
+    
+    
+
 
 
 if __name__ == "__main__":
