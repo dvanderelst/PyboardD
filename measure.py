@@ -5,7 +5,7 @@ import pyb
 import json
 import time
 import machine
-import Settings
+import settings
 
 
 adc1 = pyb.ADC(pyb.Pin.board.X8)
@@ -20,7 +20,7 @@ trigger_pin2.low()
 
 def measure(channel, fs, duration):
     value = 0
-    signal_threshold = Settings.signal_threshold
+    signal_threshold = settings.signal_threshold
     samples = int((fs/1000) * duration)
     timer = pyb.Timer(6, freq=fs)
     buffer = array.array('H', (0 for i in range(samples)))

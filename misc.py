@@ -1,15 +1,15 @@
-import Settings
+import settings
 import time
 
 def boot_display():
-    red = Settings.red
-    green = Settings.green
-    blue = Settings.blue
+    red = settings.red
+    green = settings.green
+    blue = settings.blue
     leds = [red, green, blue]
     for x in range(3):
         for led in leds:
             led.on()
-            time.sleep(0.25)
+            time.sleep(0.1)
             led.off()
     red.off()
     green.off()
@@ -17,7 +17,7 @@ def boot_display():
     
 
 def connect_received_display():
-    blue = Settings.blue
+    blue = settings.blue
     blue.off()
     blue.on()
     time.sleep(0.25)
