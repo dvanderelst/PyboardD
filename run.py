@@ -7,6 +7,7 @@ import microdot
 import measure
 import settings
 import Plot
+import servo
 
 def web_page(input_values={}):
     f = open('form.html','r')
@@ -45,19 +46,21 @@ def hello(request):
 @app.route('/form_action')
 def process_form(request):
     gc.collect()
-    
-    settings.blue.on()
-    sample_rate = settings.sample_rate
-    duration = settings.duration
-    buffer = measure.measure(1, sample_rate, duration)
-    signal_threshold = settings.signal_threshold
-    settings.blue.off()
+    positions = settings.servo_positions
     
     label = request.args['label']
     date_time = request.args['date_time']
     file_name = label + '_' + date_time  + '.csv'
     
-    measure.write_data(buffer, file_name, prefixes = [label, date_time], mode='a', sep=',')
+    for servo_position in positions:
+        servo.position(servo_position)
+        settings.blue.on()
+        sample_rate = settings.sample_rate
+        duration = settings.duration
+        buffer = measure.measure(sample_rate, duration)
+        signal_threshold = settings.signal_threshold
+        settings.blue.off()
+        measure.write_data(buffer, file_name, prefixes = [label, date_time, servo_position])
             
     body = web_page(request.args)
     return microdot.Response(body=body, headers=headers)

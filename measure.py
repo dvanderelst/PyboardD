@@ -33,10 +33,10 @@ def measure(fs, duration):
 
 def write_data(buffer, file_name, prefixes = [], mode='a', sep=','):
     f = open(file_name, mode)
-    for x in buffer:
-        line = prefixes + [x]
-        line = misc.lst2txt(line, sep=sep)
-        f.write(line + '\n')
+    buffer_text = misc.lst2txt(buffer, sep=sep)
+    prefix_text = misc.lst2txt(prefixes, sep=sep)
+    total_text = prefix_text + sep + buffer_text
+    f.write(total_text + '\n')
     f.close()
     
 
