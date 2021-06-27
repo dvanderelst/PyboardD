@@ -11,6 +11,7 @@ sample_rate = 20000
 duration = 25
 
 servo_pin = 'X6'
-servo_pulse_range = [900, 2100] # in usecs
+servo_pulse_range = [500, 2500] # in usecs
+servo_positions = list(range(500, 2500, 200)) + [2500]
 
 
