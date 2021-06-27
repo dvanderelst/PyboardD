@@ -49,6 +49,7 @@ def process_form(request):
     
     label = request.args['label']
     date_time = request.args['date_time']
+    comment = request.args['comment']
     file_name = label + '_' + date_time  + '.csv'
     
     for servo_position in positions:
@@ -59,7 +60,7 @@ def process_form(request):
         buffer = measure.measure(sample_rate, duration)
         signal_threshold = settings.signal_threshold
         settings.blue.off()
-        measure.write_data(buffer, file_name, prefixes = [label, date_time, servo_position])
+        if len(label) > 0: measure.write_data(buffer, file_name, prefixes = [label, comment ,date_time, servo_position])
             
     body = web_page(request.args)
     return microdot.Response(body=body, headers=headers)
@@ -67,4 +68,5 @@ def process_form(request):
 
 create_access_point()
 gc.collect()
+misc.boot_display()
 app.run(debug=True, host='192.168.4.1', port=80)
