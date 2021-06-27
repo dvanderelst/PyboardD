@@ -14,4 +14,6 @@ servo_pin = 'X6'
 servo_pulse_range = [500, 2500] # in usecs
 servo_positions = list(range(500, 2500, 200)) + [2500]
 
+data_sep = ','
+
 

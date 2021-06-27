@@ -16,7 +16,7 @@
       
       <form id="form" name="daq_form" action="form_action" method="GET" autocomplete="on">
         <input name="label" type="text"><br><br>
-        <input name="comment" type="text"><br>
+        <textarea name="comment" type="text" rows="4" cols="50"></textarea><br>
         <input id="date_time" name="date_time" type="hidden"><br>
         <button type="submit" class="button">Submit</button><br>
       </form>
@@ -37,7 +37,7 @@
           var date = today.getDate()+'_'+(today.getMonth()+1)+'_'+today.getFullYear();
           var time = today.getHours() + "_" + today.getMinutes() + "_" + today.getSeconds();
           var date_time = date + '_' + time;
-        	hidden_date_time.value = date_time;}
+          hidden_date_time.value = date_time;}
         
          const fom = document.getElementById('form')
          form.addEventListener('submit', myFunction);

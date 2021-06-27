@@ -46,6 +46,7 @@ def hello(request):
 def process_form(request):
     gc.collect()
     positions = settings.servo_positions
+    data_sep = settings.data_sep
     
     label = request.args['label']
     date_time = request.args['date_time']
@@ -60,7 +61,8 @@ def process_form(request):
         buffer = measure.measure(sample_rate, duration)
         signal_threshold = settings.signal_threshold
         settings.blue.off()
-        if len(label) > 0: measure.write_data(buffer, file_name, prefixes = [label, comment ,date_time, servo_position])
+        comment = comment.replace(data_sep, '')
+        if len(label) > 0: measure.write_data(buffer, file_name, prefixes = [label, comment ,date_time, servo_position], sep=data_sep)
             
     body = web_page(request.args)
     return microdot.Response(body=body, headers=headers)
