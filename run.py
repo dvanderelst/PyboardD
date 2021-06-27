@@ -31,11 +31,10 @@ def create_access_point():
     return access_point
 
 
-
-headers={'Content-Type': 'text/html'}
 gc.collect()
-
+headers={'Content-Type': 'text/html'}
 app = microdot.Microdot()
+gc.collect()
 
 @app.route('/')
 def hello(request):
@@ -67,7 +66,5 @@ def process_form(request):
 
 
 create_access_point()
+gc.collect()
 app.run(debug=True, host='192.168.4.1', port=80)
-    
-    
-    
