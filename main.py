@@ -65,8 +65,11 @@ import server
 gc.collect()
 server.connect2wifi()
 data_server  = server.Server()
+green = settings.green
+blue = settings.blue
 
 while True:
+    green.on()
     message = data_server.receive_data()
     message = message.split(settings.data_sep)
     first = int(message[0])
@@ -74,8 +77,9 @@ while True:
     sample_rate = int(message[2])
     duration = int(message[3])
     print(first, second, 'sample rate', sample_rate, 'duration', duration)
-    settings.blue.on()
+    green.off()
+    blue.on()
     buffer = measure.measure_both(first, second, sample_rate, duration)
+    blue.off()
     buffer = misc.lst2txt(buffer)
-    settings.blue.off()
     data_server.send_data(buffer)

@@ -5,6 +5,11 @@ import time
 import settings
 import network
 
+
+#
+# For use as access point in the field
+#
+
 def create_access_point():
     access_point = network.WLAN(1)
     access_point.config(essid='PYBD')          # set AP SSID
@@ -26,6 +31,10 @@ def web_page(input_values={}):
     if 'comment' in input_values: html = html.replace('xx_comment_xx', input_values['comment'])
     return html
 
+
+#
+# For use as client on the robot
+#
 
 def connect2wifi():
     sta_if = network.WLAN(network.STA_IF)
@@ -60,8 +69,6 @@ class Server:
         
     
     def receive_data(self):
-        green = settings.green
-        green.on()
         data = ''
         while 1:
             packet = self.connection.recv(self.buffer)
@@ -70,9 +77,8 @@ class Server:
             data += packet
             if data.endswith(self.break_character): break
         data = data.rstrip(self.break_character + '\n')
-        green.off()
         return data
     
     def send_data(self, message):
         encoded_message = message.encode()
-        self.connection.sendall(encoded_message)
+        self.connection.sendall(enc
