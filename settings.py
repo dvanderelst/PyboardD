@@ -4,8 +4,11 @@ red = pyb.LED(1)
 green = pyb.LED(2)
 blue = pyb.LED(3)
 
-adc_pin = 'X8'
-trigger_pin = 'X1'
+adc_pin1 = 'X7'
+trigger_pin1 = 'X1'
+adc_pin2 = 'X8'
+trigger_pin2 = 'X2'
+
 signal_threshold = 2000
 sample_rate = 20000
 duration = 25

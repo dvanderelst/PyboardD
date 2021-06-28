@@ -8,26 +8,36 @@ import machine
 import settings
 import misc
 
-adc_pin = pyb.ADC(settings.adc_pin)
-trigger_pin = pyb.Pin(settings.trigger_pin, pyb.Pin.OUT_PP)
-trigger_pin.low()
+adc_pin1 = pyb.ADC(settings.adc_pin1)
+trigger_pin1 = pyb.Pin(settings.trigger_pin1, pyb.Pin.OUT_PP)
+trigger_pin1.low()
 
+adc_pin2 = pyb.ADC(settings.adc_pin2)
+trigger_pin2 = pyb.Pin(settings.trigger_pin2, pyb.Pin.OUT_PP)
+trigger_pin2.low()
 
-def measure(fs, duration):
+def measure(channel, fs, duration):
     value = 0
-    signal_threshold = settings.signal_threshold
     samples = int((fs/1000) * duration)
     timer = pyb.Timer(6, freq=fs)
     buffer = array.array('H', (0 for i in range(samples)))
-    trigger_pin.high()
-    utime.sleep_us(30)    
-    trigger_pin.low()
+    
+    if channel == 1: trigger_pin1.high()
+    if channel == 2: trigger_pin2.high()
+    
+    utime.sleep_us(50)
+    
+    trigger_pin1.low()
+    trigger_pin2.low()
+    
     start_counter = utime.ticks_ms()
     while value < signal_threshold:
-        value = adc_pin.read()
+        if channel == 1: value = adc_pin1.read()
+        if channel == 2: value = adc_pin2.read()
         current_counter = utime.ticks_ms()
-        if current_counter - start_counter > 100: break
-    adc_pin.read_timed(buffer, timer)
+        if current_counter - start_counter > 1000: break
+    if channel == 1: adc_pin1.read_timed(buffer, timer)
+    if channel == 2: adc_pin2.read_timed(buffer, timer) 
     return buffer
 
 
@@ -38,6 +48,14 @@ def write_data(buffer, file_name, prefixes = [], mode='a', sep=','):
     total_text = prefix_text + sep + buffer_text
     f.write(total_text + '\n')
     f.close()
+    
+    
+def measure_both(first, second, fs, duration):
+    buffer1 = measure(first, fs, duration)
+    utime.sleep_ms(100)
+    buffer2 = measure(second, fs, duration)
+    total = buffer1 + buffer2
+    return total
     
 
 
