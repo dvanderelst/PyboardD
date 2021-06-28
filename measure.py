@@ -29,13 +29,13 @@ def measure(channel, fs, duration):
     
     trigger_pin1.low()
     trigger_pin2.low()
-    
+    signal_threshold = settings.signal_threshold
     start_counter = utime.ticks_ms()
     while value < signal_threshold:
         if channel == 1: value = adc_pin1.read()
         if channel == 2: value = adc_pin2.read()
         current_counter = utime.ticks_ms()
-        if current_counter - start_counter > 1000: break
+        if current_counter - start_counter > 100: break
     if channel == 1: adc_pin1.read_timed(buffer, timer)
     if channel == 2: adc_pin2.read_timed(buffer, timer) 
     return buffer
