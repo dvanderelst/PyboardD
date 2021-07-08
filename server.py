@@ -81,4 +81,4 @@ class Server:
     
     def send_data(self, message):
         encoded_message = message.encode()
-        self.connection.sendall(enc
+        self.connection.sendall(encoded_message)
