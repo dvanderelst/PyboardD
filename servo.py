@@ -6,7 +6,7 @@ import time
 
 
 
-def position(pw, wait_time=1, check_range=True):
+def position(pw, wait_time=1, sleep_time=0.25, check_range=True):
     min_value = settings.servo_pulse_range[0]
     max_value = settings.servo_pulse_range[1]
     if check_range:
@@ -22,6 +22,7 @@ def position(pw, wait_time=1, check_range=True):
         utime.sleep_ms(20)
         current_counter = utime.ticks_ms()
         if current_counter - start_counter > (wait_time * 1000): break
+    time.sleep(sleep_time)
         
         
 if __name__ == "__main__":
