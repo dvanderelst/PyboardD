@@ -1,24 +1,22 @@
-import usocket
-import time
-import network
-import gc
-import misc
-import microdot
-import measure
-import settings
-import Plot
-import servo
-import server
-import sys
-import os
-import pyb
-
 context = 'robot'
 
 ########################################################################################
 # FIELD CONTEXT
 ########################################################################################
 if context == 'field':
+    
+    import time50
+    import gc
+    import misc
+    import microdot
+    import measure
+    import settings
+    import servo
+    import server
+    import sys
+    import os
+    import pyb
+    
     gc.collect()
     settings.green.on()
     settings.red.on()
@@ -27,8 +25,6 @@ if context == 'field':
     time.sleep(1)
     settings.green.off()
     settings.red.off()
-
-    os
 
     gc.collect()
     headers={'Content-Type': 'text/html'}
@@ -75,7 +71,7 @@ if context == 'field':
 
     server.create_access_point()
     gc.collect()
-    misc.boot_display()
+    misc.boot_display1()
     app.run(debug=True, host='192.168.4.1', port=80)
 
 
@@ -84,17 +80,48 @@ if context == 'field':
 ########################################################################################
 
 if context == 'robot':
-    gc.collect()
-    server.connect2wifi()
-    data_server  = server.Server()
+    import usocket
+    import time
+    import gc
+    import misc
+    import measure
+    import settings
+    import server
+    import ujson
+        
     green = settings.green
     blue = settings.blue
+    red = settings.red
 
+    gc.collect()
+    misc.boot_display2()
+    
+    green.on()
+    red.on()
+    server.connect2wifi()
+    time.sleep(1)
+    green.off()
+    red.off()
     while True:
         green.on()
+        data_server = server.Server()
+        
         message = data_server.receive_data()
         message = message.split(settings.data_sep)
         first = int(message[0])
         second = int(message[1])
         sample_rate = int(message[2])
-        duration
+        duration = int(message[3])
+        
+        green.off()
+        blue.on()
+        buffer = measure.measure_both(first, second, sample_rate, duration)
+        blue.off()
+
+        buffer = ujson.dumps(buffer)
+        data_server.send_data(buffer)
+        
+        data_server.disconnect()
+        del(data_server)
+        gc.collect()
+        

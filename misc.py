@@ -8,7 +8,7 @@ def lst2txt(lst, sep=','):
     txt = txt.rstrip(sep)
     return txt
 
-def boot_display():
+def boot_display1():
     red = settings.red
     green = settings.green
     blue = settings.blue
@@ -21,6 +21,21 @@ def boot_display():
     red.off()
     green.off()
     blue.off()
+    
+def boot_display2():
+    red = settings.red
+    green = settings.green
+    blue = settings.blue
+    leds = [green, blue]
+    for x in range(3):
+        for led in leds:
+            led.on()
+            time.sleep(0.5)
+            led.off()
+    red.off()
+    green.off()
+    blue.off()
+    
     
 
 def connect_received_display():

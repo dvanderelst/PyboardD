@@ -53,16 +53,15 @@ class Server:
         self.buffer = 1024
         self.connection = None
         self.address = None
-        self.connect()
-    
-    def connect(self):
-        skt = socket.socket()
-        skt.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        skt.bind(('', settings.port_number))
-        skt.listen(1)
-        connection, address = skt.accept()
+        self.skt = socket.socket()
+        self.skt.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.skt.bind(('', settings.port_number))
+        self.skt.listen(1)
+        connection, address = self.skt.accept()
         self.connection = connection
         self.address = address
+        
+        
         
     def disconnect(self):
         self.connection.close()
@@ -73,12 +72,13 @@ class Server:
         while 1:
             packet = self.connection.recv(self.buffer)
             packet = packet.decode()
-            if not packet: break
+            #if not packet: break
             data += packet
             if data.endswith(self.break_character): break
         data = data.rstrip(self.break_character + '\n')
         return data
     
     def send_data(self, message):
+        if not message.endswith(self.break_character): message = message +  self.break_character
         encoded_message = message.encode()
         self.connection.sendall(encoded_message)

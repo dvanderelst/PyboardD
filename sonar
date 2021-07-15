@@ -1,0 +1,10 @@
+class Sonar:
+    def __init__(self, ):
+        self.adc_pin1 = pyb.ADC(settings.adc_pin1)
+        self.trigger_pin1 = pyb.Pin(settings.trigger_pin1, pyb.Pin.OUT_PP)
+        self.trigger_pin1.low()
+
+        self.adc_pin2 = pyb.ADC(settings.adc_pin2)
+        self.trigger_pin2 = pyb.Pin(settings.trigger_pin2, pyb.Pin.OUT_PP)
+        self.trigger_pin2.low()
+        
