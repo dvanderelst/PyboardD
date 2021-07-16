@@ -22,6 +22,7 @@ servo_positions = list(range(500, 2500, 200)) + [2500]
 signal_threshold = 2000
 sample_rate = 20000
 duration = 25
+repeats = 3
 
 
 # For robot context

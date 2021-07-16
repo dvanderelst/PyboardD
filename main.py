@@ -1,11 +1,11 @@
-context = 'robot'
+context = 'field'
 
 ########################################################################################
 # FIELD CONTEXT
 ########################################################################################
 if context == 'field':
     
-    import time50
+    import time
     import gc
     import misc
     import microdot
@@ -42,22 +42,25 @@ if context == 'field':
         gc.collect()
         positions = settings.servo_positions
         data_sep = settings.data_sep
+        repeats = settings.repeats
         
         label = request.args['label']
         date_time = request.args['date_time']
         comment = request.args['comment']
+        comment = comment.replace(data_sep, '')
+
         file_name =  '/sd/' + label + '_' + date_time  + '.csv'
         
         for servo_position in positions:
-            servo.position(servo_position)
-            settings.blue.on()
-            sample_rate = settings.sample_rate
-            duration = settings.duration
-            buffer = measure.measure(1, sample_rate, duration)
-            signal_threshold = settings.signal_threshold
-            settings.blue.off()
-            comment = comment.replace(data_sep, '')
-            if len(label) > 0: measure.write_data(buffer, file_name, prefixes = [label, comment ,date_time, servo_position], sep=data_sep)
+            for repeat in range(repeats):
+                servo.position(servo_position)
+                settings.blue.on()
+                sample_rate = settings.sample_rate
+                duration = settings.duration
+                buffer = measure.measure(1, sample_rate, duration)
+                signal_threshold = settings.signal_threshold
+                settings.blue.off()
+                if len(label) > 0: measure.write_data(buffer, file_name, prefixes = [label, comment ,date_time, servo_position], sep=data_sep)
         
         contents = os.listdir('/sd/')
         contents_list = open('sd_contents.txt','w')
