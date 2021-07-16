@@ -3,6 +3,18 @@ context = 'field'
 ########################################################################################
 # FIELD CONTEXT
 ########################################################################################
+def take_measurement(label, comment, date_time, servo_position):
+    servo.position(servo_position)
+    settings.blue.on()
+    sample_rate = settings.sample_rate
+    duration = settings.duration
+    data_sep = settings.data_sep
+    buffer = measure.measure(1, sample_rate, duration)
+    signal_threshold = settings.signal_threshold
+    settings.blue.off()
+    if len(label) > 0: measure.write_data(buffer, file_name, prefixes = [label, comment ,date_time, servo_position], sep=data_sep)
+
+
 if context == 'field':
     
     import time
@@ -41,7 +53,6 @@ if context == 'field':
     def process_form(request):
         gc.collect()
         positions = settings.servo_positions
-        data_sep = settings.data_sep
         repeats = settings.repeats
         
         label = request.args['label']
@@ -53,14 +64,8 @@ if context == 'field':
         
         for servo_position in positions:
             for repeat in range(repeats):
-                servo.position(servo_position)
-                settings.blue.on()
-                sample_rate = settings.sample_rate
-                duration = settings.duration
-                buffer = measure.measure(1, sample_rate, duration)
-                signal_threshold = settings.signal_threshold
-                settings.blue.off()
-                if len(label) > 0: measure.write_data(buffer, file_name, prefixes = [label, comment ,date_time, servo_position], sep=data_sep)
+                take_measurement(label, comment, date_time, servo_position)
+               
         
         contents = os.listdir('/sd/')
         contents_list = open('sd_contents.txt','w')
@@ -124,7 +129,4 @@ if context == 'robot':
         buffer = ujson.dumps(buffer)
         data_server.send_data(buffer)
         
-        data_server.disconnect()
-        del(data_server)
-        gc.collect()
-        
+        data_server.disconne
