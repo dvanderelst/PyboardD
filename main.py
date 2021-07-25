@@ -1,28 +1,20 @@
+import settings
+
 context = 'field'
+
+green = settings.green
+blue = settings.blue
+red = settings.red
 
 ########################################################################################
 # FIELD CONTEXT
 ########################################################################################
-def take_measurement(label, comment, date_time, servo_position):
-    servo.position(servo_position)
-    settings.blue.on()
-    sample_rate = settings.sample_rate
-    duration = settings.duration
-    data_sep = settings.data_sep
-    buffer = measure.measure(1, sample_rate, duration)
-    signal_threshold = settings.signal_threshold
-    settings.blue.off()
-    if len(label) > 0: measure.write_data(buffer, file_name, prefixes = [label, comment ,date_time, servo_position], sep=data_sep)
-
-
 if context == 'field':
-    
     import time
     import gc
     import misc
-    import microdot
+    import ujson
     import measure
-    import settings
     import servo
     import server
     import sys
@@ -30,57 +22,35 @@ if context == 'field':
     import pyb
     
     gc.collect()
-    settings.green.on()
-    settings.red.on()
-    sd_card = pyb.SDCard()
-    if sd_card.present(): os.mount(sd_card, '/sd')
-    time.sleep(1)
-    settings.green.off()
-    settings.red.off()
-
-    gc.collect()
-    headers={'Content-Type': 'text/html'}
-    app = microdot.Microdot()
-
-    gc.collect()
-    @app.route('/')
-    def hello(request):
-        gc.collect()
-        return microdot.Response(body=server.web_page(), headers=headers)
-
-
-    @app.route('/form_action')
-    def process_form(request):
-        gc.collect()
-        positions = settings.servo_positions
-        repeats = settings.repeats
-        
-        label = request.args['label']
-        date_time = request.args['date_time']
-        comment = request.args['comment']
-        comment = comment.replace(data_sep, '')
-
-        file_name =  '/sd/' + label + '_' + date_time  + '.csv'
-        
-        for servo_position in positions:
-            for repeat in range(repeats):
-                take_measurement(label, comment, date_time, servo_position)
-               
-        
-        contents = os.listdir('/sd/')
-        contents_list = open('sd_contents.txt','w')
-        contents_list.write(str(contents))
-        contents_list.close()
-        
-        
-        body = server.web_page(request.args)
-        return microdot.Response(body=body, headers=headers)
-
-
+    misc.boot_display_field()
     server.create_access_point()
-    gc.collect()
-    misc.boot_display1()
-    app.run(debug=True, host='192.168.4.1', port=80)
+    current_servo_position = -10000
+    
+    while True:
+        green.on()
+        data_server = server.Server()
+        
+        message = data_server.receive_data()
+        print(message)
+        message = message.split(settings.data_sep)
+        servo_position = int(message[0])
+        sample_rate = int(message[1])
+        duration = int(message[2])
+        
+        green.off()
+        blue.on()
+        if current_servo_position != servo_position:
+            servo.position(servo_position)
+            current_servo_position = servo_position
+        buffer = measure.measure(1, sample_rate, duration)
+        blue.off()
+
+        buffer = ujson.dumps(buffer)
+        data_server.send_data(buffer)
+        
+        data_server.disconnect()
+        del(data_server)
+        gc.collect()
 
 
 ########################################################################################
@@ -93,7 +63,6 @@ if context == 'robot':
     import gc
     import misc
     import measure
-    import settings
     import server
     import ujson
         
@@ -129,4 +98,16 @@ if context == 'robot':
         buffer = ujson.dumps(buffer)
         data_server.send_data(buffer)
         
-        data_server.disconne
+        data_server.disconnect()
+        del(data_server)
+        gc.collect()
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        

@@ -8,7 +8,7 @@ def lst2txt(lst, sep=','):
     txt = txt.rstrip(sep)
     return txt
 
-def boot_display1():
+def boot_display_field():
     red = settings.red
     green = settings.green
     blue = settings.blue
