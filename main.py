@@ -1,6 +1,7 @@
 import settings
 
-context = 'field'
+#field or robot
+context = 'robot'
 
 green = settings.green
 blue = settings.blue
@@ -71,7 +72,7 @@ if context == 'robot':
     red = settings.red
 
     gc.collect()
-    misc.boot_display2()
+    misc.boot_display_robot()
     
     green.on()
     red.on()

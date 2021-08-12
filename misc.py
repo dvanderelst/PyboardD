@@ -22,7 +22,7 @@ def boot_display_field():
     green.off()
     blue.off()
     
-def boot_display2():
+def boot_display_robot():
     red = settings.red
     green = settings.green
     blue = settings.blue
