@@ -26,7 +26,7 @@ repeats = 3
 
 # For robot context
 
-wifi_ssid = 'Medialink'
-wifi_password = 'braveheart'
+wifi_ssid = 'batnet'
+wifi_password = 'lebowski'
 break_character = '*'
 port_number = 1000

@@ -6,6 +6,10 @@ import settings
 import network
 
 
+green = settings.green
+blue = settings.blue
+red = settings.red
+
 #
 # For use as access point in the field
 #
@@ -51,17 +55,15 @@ class Server:
     def __init__(self):
         self.break_character = settings.break_character
         self.buffer = 1024
-        self.connection = None
-        self.address = None
         self.skt = socket.socket()
         self.skt.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.skt.bind(('', settings.port_number))
         self.skt.listen(1)
+        red.on()
         connection, address = self.skt.accept()
+        red.off()
         self.connection = connection
         self.address = address
-        
-        
         
     def disconnect(self):
         self.connection.close()
