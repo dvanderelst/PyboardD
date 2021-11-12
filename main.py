@@ -1,68 +1,147 @@
-import utime
-import pyb
-import array
-import pyb
-import json
-import time
-import machine
+import settings
 
-break_char = '*'
+#field or robot
+context = 'robot'
 
-red = pyb.LED(1)
-green = pyb.LED(2)
-blue = pyb.LED(3)
+green = settings.green
+blue = settings.blue
+red = settings.red
 
-baud =  9600 #
-uart = pyb.UART(1, baud)                         
-uart.init(baud, bits=8, parity=None, stop=1)
-
-signal_threshold = 2000
-
-adc1 = pyb.ADC(pyb.Pin.board.Y11)
-trigger_pin1 = pyb.Pin('X1', pyb.Pin.OUT_PP)
-
-adc2 = pyb.ADC(pyb.Pin.board.Y12)
-trigger_pin2 = pyb.Pin('X2', pyb.Pin.OUT_PP)
-
-trigger_pin1.low()
-trigger_pin2.low()
-
-
-def measure(channel, fs, duration):
-    value = 0
-    samples = int((fs/1000) * duration)
-    timer = pyb.Timer(6, freq=fs)
-    buffer = array.array('H', (0 for i in range(samples)))
+########################################################################################
+# FIELD CONTEXT
+########################################################################################
+if context == 'field':
+    import time
+    import gc
+    import misc
+    import ujson
+    import measure
+    import servo
+    import server
+    import sys
+    import os
+    import pyb
     
-    if channel == 1: trigger_pin1.high()
-    if channel == 2: trigger_pin2.high()
+    gc.collect()
+    misc.boot_display_field()
+    server.create_access_point()
+    current_servo_position = -10000
     
-    utime.sleep_us(50)
-    
-    trigger_pin1.low()
-    trigger_pin2.low()
-    
-    start_counter = utime.ticks_ms()
-    while value < signal_threshold:
-        if channel == 1: value = adc1.read()
-        if channel == 2: value = adc2.read()
-        current_counter = utime.ticks_ms()
-        if current_counter - start_counter > 1000: break
+    while True:
+        green.on()
+        data_server = server.Server()
+        message = data_server.receive_data()
+        print(message)
+        message = message.split(settings.data_sep)
+        servo_position = int(message[0])
+        sample_rate = int(message[1])
+        duration = int(message[2])
+        green.off()
+        blue.on()
+        if current_servo_position != servo_position:
+            servo.position(servo_position)
+            current_servo_position = servo_position
+        buffer = measure.measure(1, sample_rate, duration)
+        blue.off()
 
+        buffer = ujson.dumps(buffer)
+        data_server.send_data(buffer)
+        
+        data_server.disconnect()
+        del(data_server)
+        gc.collect()
+
+
+########################################################################################
+# ROBOT CONTEXT - using wifi network
+########################################################################################
+
+if context == 'robot':
+    import usocket
+    import time
+    import gc
+    import misc
+    import measure
+    import server
+    import ujson
+        
+    green = settings.green
+    blue = settings.blue
+    red = settings.red
+
+    gc.collect()
+    server.connect2wifi()
+    misc.boot_display_robot()
     
-    if channel == 1: adc1.read_timed(buffer, timer)
-    if channel == 2: adc2.read_timed(buffer, timer) 
-    
-    return buffer
+    while True:
+        data_server = server.Server()
+        
+        message = data_server.receive_data()
+        message = message.split(settings.data_sep)
+        first = int(message[0])
+        second = int(message[1])
+        sample_rate = int(message[2])
+        duration = int(message[3])
+        
+        blue.on()
+        buffer = measure.measure_both(first, second, sample_rate, duration)
+        blue.off()
+
+        buffer = ujson.dumps(buffer)
+        data_server.send_data(buffer)
+        
+        data_server.disconnect()
+        del(data_server)
+        gc.collect()
 
 
-def measure_both(first, second, fs, duration):
-    buffer1 = measure(first, fs, duration)
-    utime.sleep_ms(100)
-    buffer2 = measure(second, fs, duration)
-    total = buffer1 + buffer2
-    return total
-
-sample_rate = 10000
-duration = 10
-total_buffer = measure(1, sample_rate, duration)
+########################################################################################
+# ROBOT CONTEXT - access point
+########################################################################################
+# 
+# if context == 'robot_ap':
+#     import time
+#     import gc
+#     import misc
+#     import ujson
+#     import measure
+#     import servo
+#     import server
+#     import sys
+#     import os
+#     import pyb
+#     
+#     gc.collect()
+#     misc.boot_display_field()
+#     server.create_access_point()
+#     while True:
+#         green.on()
+#         data_server = server.Server()
+#         
+#         message = data_server.receive_data()
+#         message = message.split(settings.data_sep)
+#         first = int(message[0])
+#         second = int(message[1])
+#         sample_rate = int(message[2])
+#         duration = int(message[3])
+#         
+#         green.off()
+#         blue.on()
+#         buffer = measure.measure_both(first, second, sample_rate, duration)
+#         blue.off()
+# 
+#         buffer = ujson.dumps(buffer)
+#         data_server.send_data(buffer)
+#         
+#         data_server.disconnect()
+#         del(data_server)
+#         gc.collect()
+#         
+#         
+#         
+#         
+#         
+#         
+#         
+#         
+#         
