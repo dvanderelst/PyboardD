@@ -14,9 +14,9 @@ red = settings.red
 # For use as access point in the field
 #
 
-def create_access_point():
+def create_access_point(essid):
     access_point = network.WLAN(1)
-    access_point.config(essid='PYBD')          # set AP SSID
+    access_point.config(essid=essid)          # set AP SSID
     access_point.config(password='pybd0123')   # set AP password
     access_point.config(channel=6)             # set AP channel
     access_point.active(1)                     # enable the AP
