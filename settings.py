@@ -13,6 +13,6 @@ trigger_pin2 = 'X2'
 
 data_sep = ','
 essid = 'otter'
-signal_threshold = 2000
+signal_threshold = 0
 break_character = '*'
 port_number = 1000
