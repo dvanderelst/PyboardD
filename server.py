@@ -82,5 +82,6 @@ class Server:
     
     def send_data(self, message):
         if not message.endswith(self.break_character): message = message +  self.break_character
-        encoded_message = message.encode()
-        self.connection.sendall(encoded_message)
+        message = message.encode()
+        self.connection.sendall(message)
+        print('Data sent')
